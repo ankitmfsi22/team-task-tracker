@@ -17,9 +17,11 @@ Field names verified against the Claude Code sub-agent docs (https://code.claude
 
 One demonstrated run per agent, recorded by the coordinator.
 
-- reviewer: Run: pending (recorded by coordinator)
-- test-writer: Run: pending (recorded by coordinator)
-- db-change-checker: Run: pending (recorded by coordinator)
-- security-auditor: Run: pending (recorded by coordinator)
-- implementer: Run: pending (recorded by coordinator)
-- coordinator: Run: pending (recorded by coordinator)
+- reviewer: 2026-10-30, retro review of DEV-1001 (c12dd3d): PASS, 4 findings, see `openspec/changes/archive/2026-10-30-dev-1001-project-setup/review.md`. Also reviewed DEV-1002 and DEV-1005 (their `review.md`).
+- test-writer: 2026-10-30, wrote failing tests from spec scenarios for DEV-1002 (21), DEV-1003 (10), DEV-1004 (10), DEV-1005 (17); no implementation touched.
+- db-change-checker: 2026-10-30, schema and init migration: no blockers; 3 MEDIUM (missing `Project.archivedAt`, task indexes for filters, activity index), fed into DEV-1007 to DEV-1010.
+- security-auditor: 2026-10-30, `pnpm audit --audit-level=high` exit 0 (1 low, dev-only path), no secrets tracked, logging redaction and non-root images checked: PASS.
+- implementer: 2026-10-30, apply stages of DEV-1002 to DEV-1005: one task group per commit, all gates green.
+- coordinator: this Claude Code session ran the DEV-1002 to DEV-1010 flow, spawning one sub-agent per stage and keeping summaries only.
+
+Honest note: these runs used general-purpose sub-agents that were told to follow the matching `.claude/agents/<name>.md` as their role. The harness did not enforce the tool lists for them. For the read-only agents (reviewer, db-change-checker, security-auditor) we confirmed afterwards that `git status` showed no file changes.

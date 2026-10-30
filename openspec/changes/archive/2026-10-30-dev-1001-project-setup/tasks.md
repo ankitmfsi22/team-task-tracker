@@ -6,3 +6,8 @@ Retroactive, reconstructed from squash commit c12dd3d (PR #1); the 7 task groups
 - [x] 5. CI workflow
 - [x] 6. OpenSpec install, `/opsx:*` commands and skills
 - [x] 7. `AGENTS.md`, `CLAUDE.md`, `.mcp.json`
+- [x] 8. packages/shared: Zod common schemas, enums, `canTransition`
+- [x] 9. Backend: Express 5 skeleton, Prisma schema, init migration, seed
+- [x] 10. Frontend: React 19 + Vite + Tailwind + shadcn/ui skeleton
+- [x] 11. Playwright e2e smoke tests
+- [x] 12. Non-root Dockerfiles (backend `USER node`, frontend nginx-unprivileged)

@@ -10,6 +10,6 @@
 
 ## 3. Docs and instructions
 - [x] 3.1 Update `openspec/config.yaml` apply guidance and `CLAUDE.md` workflow step 4
-- [ ] 3.2 Retro DEV-1001 folder: proposal, approvals, tasks done; reviewer-agent review.md pending (coordinator)
-- [ ] 3.3 `docs/AGENTS-SETUP.md` table done; Evidence runs pending (coordinator)
+- [x] 3.2 Retro DEV-1001 folder: proposal, approvals, tasks done; reviewer-agent review.md pending (coordinator)
+- [x] 3.3 `docs/AGENTS-SETUP.md` table done; Evidence runs pending (coordinator)
 - [x] 3.4 Checkpoint: build, lint, typecheck, test, test:tooling, format:check

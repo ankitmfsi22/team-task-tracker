@@ -63,4 +63,4 @@ The DEV-1001 bootstrap change SHALL have a retroactive archive record with appro
 
 #### Scenario: S-DEV1003-10 Retro DEV-1001 folder is complete
 - WHEN openspec/changes/archive/2026-10-30-dev-1001-project-setup/ is read
-- THEN proposal.md is labelled RETROACTIVE, approvals.md holds `Human gate not applicable: bootstrap ticket (installs OpenSpec); retroactive record`, and review.md records the reviewer agent's findings against commit c12dd3d
+- THEN proposal.md is labelled RETROACTIVE, approvals.md starts with `Bootstrap change, no human gate:` (the form confirmed at Gate 1), and review.md records the reviewer agent's findings against commit c12dd3d
