@@ -72,3 +72,48 @@ test('S-DEV1004-10 fixture is never shown as live', async () => {
   assert.match(out, /FIXTURE/);
   assert.doesNotMatch(out.replace(/not live linear data/gi, ''), /\blive\b/i);
 });
+
+test('S-DEV1004-11 malformed ticket ids are rejected before any file access', async () => {
+  const bad = [
+    '../x',
+    'DEV-5/../DEV-8',
+    '../../x',
+    'DEV-5.fixture.json/..',
+    '',
+    '__proto__',
+    'DEV-5\n',
+    'dev-5',
+    'DEV-',
+    'DEV-5 ',
+  ];
+  for (const id of bad) {
+    const error = await failure(() => load(id));
+    assert.ok(
+      error instanceof (await import('./ticket-source.mjs')).TicketNotFoundError,
+      JSON.stringify(id),
+    );
+    assert.equal(error.message, 'ticket not found: invalid ticket id');
+    assert.doesNotMatch(error.message, /\.\.|\/|__proto__/);
+    const r = cli(id);
+    assert.notEqual(r.status, 0);
+    assert.match(r.stderr, /ticket not found: invalid ticket id/);
+    assert.doesNotMatch(r.stderr, /ENOTDIR|\/Users|\/home|\/tmp/);
+    assert.equal(r.stdout, '');
+  }
+});
+
+test('S-DEV1004-12 fixture id must equal the requested id', async () => {
+  const dir = tempDir('DEV-81', JSON.stringify({ ...valid, id: 'DEV-8' }));
+  const error = await failure(() => load('DEV-81', dir));
+  assert.match(error.message, /DEV-81\.fixture\.json/);
+  assert.match(error.message, /\bid\b/i);
+  assert.doesNotMatch(error.message, /Sample ticket/);
+});
+
+test('S-DEV1004-13 oversized fixture is rejected', async () => {
+  const big = JSON.stringify({ ...valid, id: 'DEV-82', title: 'x'.repeat(1024 * 1024) });
+  const dir = tempDir('DEV-82', big);
+  const error = await failure(() => load('DEV-82', dir));
+  assert.match(error.message, /DEV-82\.fixture\.json/);
+  assert.match(error.message, /too large|size/i);
+});

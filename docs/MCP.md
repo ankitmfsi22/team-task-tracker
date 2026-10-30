@@ -28,10 +28,13 @@ Ticket mapping: assignment `DEV-10NN` is Linear `DEV-(NN+4)` (DEV-1004 is `DEV-8
 
 ## Permissions
 
-| Tool kind                                                              | Policy                                                              |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Read (`get_issue`, `list_*`, `get_*`, Context7)                        | Allowed without prompting.                                          |
-| Write (`save_issue`, `save_project`, `save_comment`, and other `save_*`) | Exist, but need explicit user approval each time (settings `ask`). |
+Mirrors `.claude/settings.json` exactly (Linear server `linear-server`).
+
+| Tool kind                                                                                                       | Policy                                          |
+| --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Read: every `get_*` and `list_*` Linear tool (incl. `get_issue`, `list_issues`, `list_teams`, `list_projects`), `search_documentation`, `extract_images`, Context7 `resolve-library-id` and `query-docs` | `allow`: no prompt.                             |
+| Write: `save_*`, `create_*`, `delete_*`, `merge_diff`, `submit_diff_review`, `share_issue`, `unshare_issue`, `mark_notification`, `resolve_diff_thread`, `retire_*`, `restore_*`, `update_diff`, `prepare_*_upload` | `ask`: explicit user approval every time.       |
+| Unsupported via this setup                                                                                      | No hard delete of projects or issues (archive/cancel only); no Plane integration. |
 
 ## Failure handling
 

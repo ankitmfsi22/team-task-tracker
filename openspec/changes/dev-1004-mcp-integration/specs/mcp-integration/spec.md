@@ -52,3 +52,15 @@ Fixtures and the ticket-source script SHALL label fallback data and SHALL NOT pr
 #### Scenario: S-DEV1004-10 Fixture is never shown as live
 - WHEN a fixture has a wrong or missing source label, or any ticket is printed
 - THEN the mislabelled fixture is rejected and the output never claims the data is live
+
+#### Scenario: S-DEV1004-11 Malformed ticket ids are rejected
+- WHEN the requested id does not match `^DEV-\d+$` (for example `../x`, `DEV-5/../DEV-8`, empty, `__proto__`, or a trailing newline)
+- THEN the loader throws a fixed "ticket not found: invalid ticket id" error without echoing the input, before any path is built
+
+#### Scenario: S-DEV1004-12 Fixture id must equal the requested id
+- WHEN a fixture file's `id` differs from the requested id
+- THEN the loader rejects it with an error naming the file and `id`
+
+#### Scenario: S-DEV1004-13 Oversized fixture is rejected
+- WHEN a fixture file is larger than 1 MB
+- THEN the loader rejects it with a "too large" error naming the file before parsing
