@@ -110,4 +110,4 @@ Honest list of where this repo departs from `docs/reference/SDD-GUIDE.md`. Updat
 | DEV-1015 Codebase graph setup | [DEV-19](https://linear.app/team-task-tracker/issue/DEV-19) | - | - | Todo |
 | DEV-1016 Testing | [DEV-20](https://linear.app/team-task-tracker/issue/DEV-20) | - | - | Todo |
 | DEV-1017 Independent review | [DEV-21](https://linear.app/team-task-tracker/issue/DEV-21) | - | - | Todo |
-| DEV-1018 Final integration | [DEV-22](https://linear.app/team-task-tracker/issue/DEV-22) | - | - | Todo |
+| DEV-1018 Final integration | [DEV-22](https://linear.app/team-task-tracker/issue/DEV-22) | `dev-1018-guide-alignment` (guide alignment, active) | - | In progress |
