@@ -87,6 +87,7 @@ Honest list of where this repo departs from `docs/reference/SDD-GUIDE.md`. Updat
 | 4 | Red test commits are not possible: the pre-commit hook runs the whole tooling suite. Tests are written first by the test-writer but committed together with the implementation of the same task group. | The hook is a quality gate and `--no-verify` is forbidden. |
 | 5 | Archive and the README status row are a separate small PR after each feature PR (guide: sync and archive after merge). | Direct pushes to `main` are forbidden. |
 | 6 | Where the SDS and a Linear ticket disagreed, the SDS won (422 for validation). Exception: DEV-1008 uses 409 `INVALID_TRANSITION`, and the SDS was updated to match. | Ankit's confirmations at Gate 1. |
+| 7 | Merge order was not strictly ticket order: DEV-1005 (PR #6) merged before DEV-1003 (#4) and DEV-1004 (#5), because it only depends on DEV-1002. The three branches were developed in parallel worktrees, so each merged `main` into its branch before its own merge (plain pushes, no force-push). | Their dependencies allow it, and it saved time. |
 
 ## Ticket status
 
