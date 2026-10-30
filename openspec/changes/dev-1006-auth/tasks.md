@@ -1,6 +1,6 @@
 ## 1. Contract (first)
-- [ ] 1.1 `packages/shared`: `RegisterInput`, `LoginInput`, `AuthUser`, `AuthResponse` schemas, types and unit tests
-- [ ] 1.2 Checkpoint: build, lint, typecheck, test
+- [x] 1.1 `packages/shared`: `RegisterInput`, `LoginInput`, `AuthUser`, `AuthResponse` schemas, types and unit tests
+- [x] 1.2 Checkpoint: build, lint, typecheck, test
 
 ## 2. Tests first
 - [ ] 2.1 Test-writer: integration tests (real Postgres, Supertest) for S-DEV1006-01..24 (failing)

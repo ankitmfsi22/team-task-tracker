@@ -1,5 +1,11 @@
 import type { z } from 'zod';
 import type {
+  AuthResponseSchema,
+  AuthUserSchema,
+  LoginInputSchema,
+  RegisterInputSchema,
+} from './schemas/auth.js';
+import type {
   ErrorCodeSchema,
   ErrorDetailSchema,
   ErrorResponseSchema,
@@ -18,3 +24,7 @@ export type PaginationQuery = z.infer<typeof PaginationQuerySchema>;
 export type Role = z.infer<typeof RoleSchema>;
 export type TaskStatus = z.infer<typeof TaskStatusSchema>;
 export type TaskPriority = z.infer<typeof TaskPrioritySchema>;
+export type RegisterInput = z.infer<typeof RegisterInputSchema>;
+export type LoginInput = z.infer<typeof LoginInputSchema>;
+export type AuthUser = z.infer<typeof AuthUserSchema>;
+export type AuthResponse = z.infer<typeof AuthResponseSchema>;
