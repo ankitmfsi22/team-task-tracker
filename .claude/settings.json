@@ -18,8 +18,44 @@
       "Bash(git commit:*)",
       "mcp__context7__resolve-library-id",
       "mcp__context7__query-docs",
+      "mcp__linear-server__get_agent_skill",
+      "mcp__linear-server__get_attachment",
+      "mcp__linear-server__get_diff",
+      "mcp__linear-server__get_diff_threads",
+      "mcp__linear-server__get_document",
       "mcp__linear-server__get_issue",
-      "mcp__linear-server__list_issues"
+      "mcp__linear-server__get_issue_status",
+      "mcp__linear-server__get_milestone",
+      "mcp__linear-server__get_notifications",
+      "mcp__linear-server__get_project",
+      "mcp__linear-server__get_release",
+      "mcp__linear-server__get_release_note",
+      "mcp__linear-server__get_status_updates",
+      "mcp__linear-server__get_team",
+      "mcp__linear-server__get_template",
+      "mcp__linear-server__get_triage_responsibility",
+      "mcp__linear-server__get_user",
+      "mcp__linear-server__get_workspace",
+      "mcp__linear-server__list_agent_skills",
+      "mcp__linear-server__list_comments",
+      "mcp__linear-server__list_custom_views",
+      "mcp__linear-server__list_cycles",
+      "mcp__linear-server__list_diffs",
+      "mcp__linear-server__list_documents",
+      "mcp__linear-server__list_issue_labels",
+      "mcp__linear-server__list_issue_statuses",
+      "mcp__linear-server__list_issues",
+      "mcp__linear-server__list_milestones",
+      "mcp__linear-server__list_project_labels",
+      "mcp__linear-server__list_projects",
+      "mcp__linear-server__list_release_notes",
+      "mcp__linear-server__list_release_pipelines",
+      "mcp__linear-server__list_releases",
+      "mcp__linear-server__list_teams",
+      "mcp__linear-server__list_templates",
+      "mcp__linear-server__list_users",
+      "mcp__linear-server__search_documentation",
+      "mcp__linear-server__extract_images"
     ],
     "ask": [
       "Bash(git push:*)",
@@ -30,9 +66,37 @@
       "Bash(gh pr merge:*)",
       "Bash(pnpm exec prisma migrate:*)",
       "Bash(prisma migrate:*)",
+      "mcp__linear-server__create_attachment",
+      "mcp__linear-server__create_attachment_from_upload",
+      "mcp__linear-server__create_issue_label",
+      "mcp__linear-server__delete_attachment",
+      "mcp__linear-server__delete_comment",
+      "mcp__linear-server__delete_diff_comment",
+      "mcp__linear-server__delete_status_update",
+      "mcp__linear-server__mark_notification",
+      "mcp__linear-server__merge_diff",
+      "mcp__linear-server__prepare_attachment_upload",
+      "mcp__linear-server__prepare_file_upload",
+      "mcp__linear-server__resolve_diff_thread",
+      "mcp__linear-server__restore_issue_label",
+      "mcp__linear-server__restore_project_label",
+      "mcp__linear-server__retire_issue_label",
+      "mcp__linear-server__retire_project_label",
+      "mcp__linear-server__save_comment",
+      "mcp__linear-server__save_diff_comment",
+      "mcp__linear-server__save_document",
       "mcp__linear-server__save_issue",
+      "mcp__linear-server__save_issue_label",
+      "mcp__linear-server__save_milestone",
       "mcp__linear-server__save_project",
-      "mcp__linear-server__save_comment"
+      "mcp__linear-server__save_project_label",
+      "mcp__linear-server__save_release",
+      "mcp__linear-server__save_release_note",
+      "mcp__linear-server__save_status_update",
+      "mcp__linear-server__share_issue",
+      "mcp__linear-server__submit_diff_review",
+      "mcp__linear-server__unshare_issue",
+      "mcp__linear-server__update_diff"
     ],
     "deny": [
       "Read(./.env)",
@@ -53,19 +117,28 @@
       {
         "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard.mjs" }
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard.mjs"
+          }
         ]
       },
       {
         "matcher": "Read|Edit|Write",
         "hooks": [
-          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard.mjs" }
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard.mjs"
+          }
         ]
       },
       {
         "matcher": "Grep|Glob",
         "hooks": [
-          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard.mjs" }
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard.mjs"
+          }
         ]
       }
     ],
@@ -73,7 +146,10 @@
       {
         "matcher": "Edit|Write",
         "hooks": [
-          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/format.mjs" }
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/format.mjs"
+          }
         ]
       }
     ],

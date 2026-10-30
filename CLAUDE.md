@@ -35,3 +35,5 @@ Typos, dependency bumps and small fixes may skip the spec. Run `/clear` between 
 - Error codes, roles, status transitions, auth: `docs/SDS.md`. Endpoints: `docs/api/openapi.yaml` (also `/api/docs`).
 - OpenSpec commands live in `.claude/commands/opsx/`, plus `/create-pr`; skills in `.claude/skills/`.
 - Hooks in `.claude/hooks/` (guard, format, stop) and permissions in `.claude/settings.json`. Layer rules: `backend/`, `frontend/`, `packages/shared/` `CLAUDE.md`. Requirements index: `docs/FRS.md`.
+
+MCP (Linear, Context7): setup, permissions and failure handling in docs/MCP.md.
