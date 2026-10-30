@@ -15,9 +15,14 @@ const ready = args.includes('--ready');
 const WAIVER =
   "Human gate waived on senior's instruction; spec checked by openspec validate --strict + reviewer sub-agent";
 const PENDING = 'Status: PENDING human Gate 1 (batch approval)';
-const APPROVED = /^Approved by .+ on \d{4}-\d{2}-\d{2}\b/;
+const APPROVED = /^Approved by (.+?) on (\d{4})-(\d{2})-(\d{2})(?: \(.*\))?\.?$/;
 const BOOTSTRAP = /^Bootstrap change, no human gate: .+/;
-const VERDICT = /^[\s*_#>-]*Verdict[^:\n]*:/im;
+const VERDICT = /^[\s*_#>-]*Verdict[^:\n]*:[\s*_]*(.*)$/gim;
+const LINEAR = /(?<![^\s(<[])https:\/\/linear\.app\/[\w-]+\/issue\/DEV-(\d+)\b/g;
+const realDate = (y, m, d) => {
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
+};
 const DATE_PREFIX = /^\d{4}-\d{2}-\d{2}-/;
 
 const errors = [];
@@ -63,9 +68,7 @@ for (const { folder, dir, archived } of changes) {
   else {
     if (lineCount(proposal) > 15) fail('proposal.md', `${lineCount(proposal)} lines, max 15`);
     const want = ticket ? Number(ticket) - 1000 + 4 : null;
-    const ids = [...proposal.matchAll(/linear\.app\/[^\s)]*\/issue\/DEV-(\d+)\b/g)].map((m) =>
-      Number(m[1]),
-    );
+    const ids = [...proposal.matchAll(LINEAR)].map((m) => Number(m[1]));
     if (!ids.includes(want)) fail('proposal.md', `needs a Linear issue URL for DEV-${want}`);
   }
 
@@ -81,15 +84,24 @@ for (const { folder, dir, archived } of changes) {
     const first = text.split('\n')[0] ?? '';
     if (text === PENDING) {
       if (strict) fail('approvals.md', 'Gate 1 still PENDING');
-    } else if (!(APPROVED.test(first) || BOOTSTRAP.test(first) || text === WAIVER)) {
-      fail('approvals.md', 'unrecognised approval form');
+    } else {
+      const a = text === first ? APPROVED.exec(first) : null;
+      const approved = a !== null && realDate(Number(a[2]), Number(a[3]), Number(a[4]));
+      const bootstrap = text === first && BOOTSTRAP.test(first);
+      if (!(approved || bootstrap || text === WAIVER))
+        fail('approvals.md', 'unrecognised approval form');
     }
   }
 
   const review = read(join(dir, 'review.md'));
   if (review === null) {
     if (strict) fail('review.md', 'missing');
-  } else if (strict && !VERDICT.test(review)) fail('review.md', 'no Verdict: line');
+  } else if (strict) {
+    const last = [...review.matchAll(VERDICT)].at(-1);
+    if (!last) fail('review.md', 'no Verdict: line');
+    else if (!/^PASS\b/.test(last[1] ?? ''))
+      fail('review.md', 'last Verdict: line must start with PASS');
+  }
 
   for (const file of existsSync(join(dir, 'specs')) ? walk(join(dir, 'specs')) : []) {
     if (!file.endsWith('.md')) continue;

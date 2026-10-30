@@ -190,3 +190,69 @@ test('S-DEV1005-17 Script is wired', () => {
   const verify = ci.split(/^ {2}commits:$/m)[0] ?? '';
   assert.match(verify, /pnpm check:changes/);
 });
+
+test('S-DEV1005-18 Only a PASS verdict passes when ready', () => {
+  const verdict = (v) => fixture({ review: `# Review log\n\n${v}\n` });
+  for (const bad of ['Verdict: BLOCKING (3)', 'Verdict: maybe', 'Verdict:']) {
+    const { root } = verdict(bad);
+    assert.equal(run(root).status, 0, out(run(root)));
+    failsNaming(run(root, '--ready'), 'review.md');
+  }
+  for (const good of ['Verdict: PASS', '**Verdict:** PASS (after fix)']) {
+    const r = run(verdict(good).root, '--ready');
+    assert.equal(r.status, 0, out(r));
+  }
+  const fixed = fixture({ review: 'Verdict: BLOCKING (1)\n\nVerdict: PASS after fix\n' });
+  assert.equal(run(fixed.root, '--ready').status, 0);
+  failsNaming(run(fixture({ archived: true, review: 'Verdict: BLOCKING\n' }).root), 'review.md');
+});
+
+test('S-DEV1005-19 CI re-runs when a draft is marked ready', () => {
+  const ci = readFileSync(join(repo, '.github', 'workflows', 'ci.yml'), 'utf8');
+  const types = /^ {2}pull_request:\n {4}types: \[([^\]]*)\]/m.exec(ci)?.[1] ?? '';
+  const list = types.split(',').map((t) => t.trim());
+  for (const t of ['opened', 'synchronize', 'reopened', 'ready_for_review'])
+    assert.ok(list.includes(t), t);
+});
+
+test('S-DEV1005-20 CI verify typechecks before the tests', () => {
+  const ci = readFileSync(join(repo, '.github', 'workflows', 'ci.yml'), 'utf8');
+  const verify = ci.split(/^ {2}commits:$/m)[0] ?? '';
+  const typecheck = verify.indexOf('run: pnpm typecheck');
+  assert.ok(typecheck > -1, 'verify runs pnpm typecheck');
+  assert.ok(typecheck < verify.indexOf('run: pnpm test'), 'typecheck precedes the tests');
+});
+
+test('S-DEV1005-21 Linear link must be an anchored linear.app issue URL', () => {
+  const bad = [
+    'https://evil.com/?q=linear.app/x/issue/DEV-9',
+    'see linear.app/x/issue/DEV-9',
+    'https://linear.app.evil.com/x/issue/DEV-9',
+    'http://linear.app/x/issue/DEV-9',
+  ];
+  for (const url of bad)
+    failsNaming(run(fixture({ proposal: `## Why\n${url}\n` }).root), 'proposal.md');
+  const ok = run(
+    fixture({ proposal: '## Why\n[DEV-9](https://linear.app/team-x/issue/DEV-9)\n' }).root,
+  );
+  assert.equal(ok.status, 0, out(ok));
+});
+
+test('S-DEV1005-22 Approval date must be real and the file a single line', () => {
+  for (const approvals of [
+    'Approved by Ankit on 2026-99-99\n',
+    'Approved by Ankit on 2026-02-30\n',
+    'Approved by Ankit on 2026-10-30\ngarbage\n',
+    'Approved by Ankit on 2026-10-30 trailing\n',
+    `${WAIVER}\nextra\n`,
+  ]) {
+    failsNaming(run(fixture({ approvals }).root), 'approvals.md');
+  }
+  for (const approvals of [
+    'Approved by Ankit on 2026-10-30\n',
+    'Approved by Ankit on 2026-10-30 (Gate 1, batch)\n',
+  ]) {
+    const r = run(fixture({ approvals }).root);
+    assert.equal(r.status, 0, out(r));
+  }
+});

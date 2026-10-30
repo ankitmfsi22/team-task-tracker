@@ -54,7 +54,7 @@ Every change SHALL have an approvals.md in an accepted form.
 - THEN the script exits 0 by default and exits 1 with `--ready`
 
 ### Requirement: Review verdict
-A non-draft or archived change SHALL have a review.md with a `Verdict:` line.
+A non-draft or archived change SHALL have a review.md whose last `Verdict:` line starts with PASS.
 
 #### Scenario: S-DEV1005-11 Missing verdict fails when ready
 - WHEN review.md has no `Verdict:` line
@@ -63,6 +63,10 @@ A non-draft or archived change SHALL have a review.md with a `Verdict:` line.
 #### Scenario: S-DEV1005-12 Archived change needs verdict and review
 - WHEN an archived change has no review.md or no `Verdict:` line
 - THEN the script exits 1 even without `--ready`
+
+#### Scenario: S-DEV1005-18 Only a PASS verdict passes when ready
+- WHEN the last `Verdict:` line of review.md is BLOCKING, empty or any value not starting with PASS
+- THEN the script exits 0 by default and exits 1 with `--ready` (and always for archived changes); `Verdict: PASS` passes
 
 ### Requirement: Scenario ids belong to the ticket
 Scenario ids in a change SHALL carry the ticket of the folder name.
@@ -92,3 +96,25 @@ The repository SHALL pass the script, which runs in CI and in `pnpm test:tooling
 #### Scenario: S-DEV1005-17 Script is wired
 - WHEN package.json and ci.yml are read
 - THEN `check:changes` exists as a script and the CI verify job runs it
+
+### Requirement: CI hardening
+The CI workflow SHALL re-run when a draft is marked ready and SHALL typecheck before the tests.
+
+#### Scenario: S-DEV1005-19 CI re-runs when a draft is marked ready
+- WHEN ci.yml is read
+- THEN the pull_request trigger lists opened, synchronize, reopened and ready_for_review
+
+#### Scenario: S-DEV1005-20 CI verify typechecks before the tests
+- WHEN the verify job is read
+- THEN it runs `pnpm typecheck` before `pnpm test`
+
+### Requirement: Link and approval validation
+The Linear link SHALL be an anchored `https://linear.app/<workspace>/issue/DEV-<n>` URL and approvals SHALL be a single valid line.
+
+#### Scenario: S-DEV1005-21 Linear link must be an anchored linear.app issue URL
+- WHEN proposal.md only has a URL on another host, a bare `linear.app/...` or an `http://` link
+- THEN the script exits 1 naming proposal.md
+
+#### Scenario: S-DEV1005-22 Approval date must be real and the file a single line
+- WHEN approvals.md has a date such as 2026-02-30, trailing text or extra lines
+- THEN the script exits 1 naming approvals.md
