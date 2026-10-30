@@ -45,7 +45,7 @@ REST under `/api`. Swagger UI: http://localhost:3000/api/docs (http://localhost:
 
 ## Workflow
 
-Requirements live in Linear. For each ticket: fetch it through the Linear MCP, `/opsx:propose` a change, get the human `approved` in the change's `approvals.md`, `/opsx:apply`, `/opsx:verify`, `/opsx:archive`, then one pull request. Commits are `type(scope): description DEV-10xx` on branches `feature/<domain>/DEV-10xx-short-name`; Husky and commitlint enforce it, CI runs verify, e2e, gitleaks and a commit check. See `CLAUDE.md`.
+Requirements live in Linear. For each ticket: fetch it through the Linear MCP, `/opsx:propose` a change, get the human `approved` in the change's `approvals.md`, `/opsx:apply`, `/opsx:verify`, `/opsx:archive`, then one pull request. Commits are `type(scope): description DEV-10xx` on branches `feature/<domain>/DEV-10xx-short-name`; Husky and commitlint enforce it, CI runs verify, e2e, gitleaks and a commit check. See `CLAUDE.md`; MCP setup and failure handling are in `docs/MCP.md`.
 
 ## Ticket status
 
