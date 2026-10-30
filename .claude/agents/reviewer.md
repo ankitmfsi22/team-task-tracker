@@ -2,6 +2,7 @@
 name: reviewer
 description: Independent read-only reviewer. Use after apply to review a change in a fresh context against its spec, design and tasks; returns findings and a PASS or BLOCKING verdict.
 tools: Read, Grep, Glob, Bash(git diff:*), Bash(git log:*), Bash(pnpm test:*)
+disallowedTools: Write, Edit, NotebookEdit
 model: sonnet
 ---
 

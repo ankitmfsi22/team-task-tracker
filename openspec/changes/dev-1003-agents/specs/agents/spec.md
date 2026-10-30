@@ -64,3 +64,10 @@ The DEV-1001 bootstrap change SHALL have a retroactive archive record with appro
 #### Scenario: S-DEV1003-10 Retro DEV-1001 folder is complete
 - WHEN openspec/changes/archive/2026-10-30-dev-1001-project-setup/ is read
 - THEN proposal.md is labelled RETROACTIVE, approvals.md starts with `Bootstrap change, no human gate:` (the form confirmed at Gate 1), and review.md records the reviewer agent's findings against commit c12dd3d
+
+### Requirement: Enforcement limits are documented
+AGENTS-SETUP SHALL state how read-only is enforced, its residual limits, and the coordinator's post-run `git status --porcelain` check.
+
+#### Scenario: S-DEV1003-11 AGENTS-SETUP states the enforcement limits and the post-run git status check
+- WHEN docs/AGENTS-SETUP.md and the coordinator are read
+- THEN AGENTS-SETUP lists the enforcement layers and the residual limits, and both it and the coordinator require a post-run `git status --porcelain` check

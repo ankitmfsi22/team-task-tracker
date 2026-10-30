@@ -6,7 +6,7 @@
 1. Fetch the ticket with `mcp__linear-server__get_issue` (Linear id `DEV-(n-1000+4)`, so `DEV-1001` is Linear `DEV-5`). Verify the key and its dependencies.
 2. `/opsx:explore`, then `/opsx:propose dev-10xx-short-name`: writes proposal, specs, design, tasks, plus `approvals.md` and a `review.md` stub. `pnpm exec openspec validate <change> --strict` must pass.
 3. Approval: the human gate is waived on the senior's instruction. `approvals.md` holds exactly: `Human gate waived on senior's instruction; spec checked by openspec validate --strict + reviewer sub-agent`. Never claim a human approved.
-4. `/opsx:apply`: apply invokes the test-writer sub-agent first (failing tests from the spec scenarios), then implement, one commit per task, with a build, lint and test checkpoint per phase. The reviewer sub-agent runs afterwards; the coordinator persists its findings to `review.md`.
+4. `/opsx:apply`: apply invokes the test-writer sub-agent first (failing tests from the spec scenarios), then implement, one commit per task, with a build, lint and test checkpoint per phase. The reviewer sub-agent runs afterwards; the coordinator persists its findings to `review.md` and checks `git status --porcelain` is clean after the run.
 5. `/opsx:verify` plus the reviewer sub-agent (fresh context, read-only) writes findings and a PASS or BLOCKING verdict into `review.md`; fix every BLOCKING finding.
 6. `/create-pr`, wait until CI is green, squash merge, then `/opsx:sync` and `/opsx:archive`, then `pnpm spec:validate` and `pnpm check:scenarios`.
 

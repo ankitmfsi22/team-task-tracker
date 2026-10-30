@@ -152,3 +152,14 @@ test('S-DEV1003-10 Retro DEV-1001 folder is complete', () => {
   assert.match(review, /reviewer/i);
   assert.match(review, /c12dd3d/);
 });
+
+test('S-DEV1003-11 AGENTS-SETUP states the enforcement limits and the post-run git status check', () => {
+  const doc = read('docs', 'AGENTS-SETUP.md');
+  assert.match(doc, /Enforcement limits/);
+  assert.match(doc, /disallowedTools/);
+  assert.match(doc, /prompt-level/);
+  assert.match(doc, /pnpm test:\*/);
+  assert.match(doc, /git status --porcelain/);
+  assert.match(parse('coordinator').body, /git status --porcelain/);
+  assert.match(parse('reviewer').fm.disallowedTools, /Write, Edit, NotebookEdit/);
+});
