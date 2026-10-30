@@ -52,7 +52,7 @@ Requirements live in Linear. For each ticket: fetch it through the Linear MCP, `
 | Ticket | Linear | OpenSpec change | PR | Status |
 | --- | --- | --- | --- | --- |
 | DEV-1001 Project setup | [DEV-5](https://linear.app/team-task-tracker/issue/DEV-5) | - | - | In progress |
-| DEV-1002 Claude Code setup | [DEV-6](https://linear.app/team-task-tracker/issue/DEV-6) | - | - | Todo |
+| DEV-1002 Claude Code setup | [DEV-6](https://linear.app/team-task-tracker/issue/DEV-6) | `claude-setup` (archived `2026-10-30-dev-1002-claude-code-setup`) | [#2](https://github.com/ankitmfsi22/team-task-tracker/pull/2) | Done |
 | DEV-1003 Autonomous agents | [DEV-7](https://linear.app/team-task-tracker/issue/DEV-7) | - | - | Todo |
 | DEV-1004 MCP integration | [DEV-8](https://linear.app/team-task-tracker/issue/DEV-8) | - | - | Todo |
 | DEV-1005 OpenSpec workflow | [DEV-9](https://linear.app/team-task-tracker/issue/DEV-9) | - | - | Todo |
