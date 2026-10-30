@@ -87,6 +87,52 @@ test('S-DEV1002-10 safe commands pass', () => {
   }
 });
 
+test('S-DEV1002-22 git global options cannot hide destructive git', () => {
+  for (const c of [
+    'git -C . push origin main',
+    'git -c x=y push -f',
+    'git --git-dir=.git --work-tree=. reset --hard',
+    'git -C . clean -fd',
+    'git -C "my dir" push --force',
+  ]) {
+    expectBlocked('guard.mjs', bash(c));
+  }
+  expectAllowed('guard.mjs', bash('git -C . status'));
+  expectAllowed('guard.mjs', bash('git -C ../x push origin feature/x'));
+});
+
+test('S-DEV1002-23 push refspecs targeting main are blocked', () => {
+  for (const c of [
+    'git push origin HEAD:main',
+    'git push origin HEAD:refs/heads/main',
+    'git push origin HEAD:Main',
+    'git push origin +HEAD:main',
+    'git push origin +HEAD',
+    'git push --mirror',
+    'git push --force-with-lease origin HEAD:main',
+  ]) {
+    expectBlocked('guard.mjs', bash(c));
+  }
+  expectAllowed('guard.mjs', bash('git push origin HEAD:feature/main-page'));
+});
+
+test('S-DEV1002-24 Grep and Glob cannot reach .env files', () => {
+  const tool = (tool_name, tool_input) => ({
+    hook_event_name: 'PreToolUse',
+    tool_name,
+    tool_input,
+  });
+  expectBlocked('guard.mjs', tool('Grep', { pattern: 'KEY', path: '/repo/.env' }));
+  expectBlocked('guard.mjs', tool('Grep', { pattern: 'KEY', path: '/repo', glob: '.env*' }));
+  expectBlocked('guard.mjs', tool('Grep', { pattern: 'KEY', path: '/repo/backend/.env.local' }));
+  expectBlocked('guard.mjs', tool('Glob', { pattern: '**/.env*' }));
+  expectAllowed('guard.mjs', tool('Grep', { pattern: 'KEY', path: '/repo/.env.example' }));
+  expectAllowed('guard.mjs', tool('Glob', { pattern: 'src/**/*.ts' }));
+  const settings = JSON.parse(readFileSync(join(root, '.claude', 'settings.json'), 'utf8'));
+  const pre = settings.hooks.PreToolUse.map((g) => g.matcher);
+  assert.ok(pre.includes('Grep|Glob'));
+});
+
 test('S-DEV1002-11 file tools cannot touch .env files', () => {
   for (const tool of ['Read', 'Edit', 'Write']) {
     expectBlocked('guard.mjs', file(tool, join(root, '.env')));

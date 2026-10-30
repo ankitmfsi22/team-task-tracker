@@ -21,7 +21,7 @@ Claude Code project configuration: permissions, hooks, commands, skills and laye
 
 #### Scenario: S-DEV1002-04 Exactly three hooks are registered
 - WHEN settings.json is read
-- THEN hooks are PostToolUse (Edit|Write), PreToolUse (Bash and Read|Edit|Write) and Stop, each pointing to an existing script in .claude/hooks/
+- THEN hooks are PostToolUse (Edit|Write), PreToolUse (Bash, Read|Edit|Write and Grep|Glob) and Stop, each pointing to an existing script in .claude/hooks/
 
 ### Requirement: Guard hook blocks dangerous Bash commands
 The PreToolUse guard SHALL exit 2 with a reason on stderr for dangerous commands and exit 0 otherwise.
@@ -54,6 +54,21 @@ The PreToolUse guard SHALL exit 2 with a reason on stderr for dangerous commands
 - WHEN Read, Edit or Write targets `.env` or `backend/.env.local`
 - THEN the guard exits 2
 - AND a target of `.env.example` exits 0
+
+#### Scenario: S-DEV1002-22 Git global options cannot hide destructive git
+- WHEN Bash runs `git -C . push origin main`, `git -c x=y push -f`, `git --git-dir=.git --work-tree=. reset --hard` or `git -C . clean -fd`
+- THEN the guard exits 2
+- AND `git -C . status` and `git -C ../x push origin feature/x` exit 0
+
+#### Scenario: S-DEV1002-23 Push refspecs targeting main are blocked
+- WHEN Bash runs `git push origin HEAD:main`, `HEAD:refs/heads/main`, `HEAD:Main`, `+HEAD:main`, `git push --mirror` or `git push --force-with-lease origin HEAD:main`
+- THEN the guard exits 2
+- AND `git push origin HEAD:feature/main-page` exits 0
+
+#### Scenario: S-DEV1002-24 Grep and Glob cannot reach .env files
+- WHEN Grep or Glob targets `.env`, `backend/.env.local` or the glob `**/.env*`
+- THEN the guard exits 2
+- AND targets `.env.example` and `src/**/*.ts` exit 0
 
 ### Requirement: Format hook
 The PostToolUse hook SHALL run `prettier --write` on the changed file.

@@ -61,6 +61,12 @@
         "hooks": [
           { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard.mjs" }
         ]
+      },
+      {
+        "matcher": "Grep|Glob",
+        "hooks": [
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard.mjs" }
+        ]
       }
     ],
     "PostToolUse": [

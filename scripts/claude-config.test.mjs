@@ -79,7 +79,8 @@ test('S-DEV1002-04 exactly three hooks are registered', () => {
   assert.ok(matchers('PostToolUse').includes('Edit|Write'));
   assert.ok(matchers('PreToolUse').includes('Bash'));
   assert.ok(matchers('PreToolUse').includes('Read|Edit|Write'));
-  assert.equal(hooks.PreToolUse.length, 2);
+  assert.ok(matchers('PreToolUse').includes('Grep|Glob'));
+  assert.equal(hooks.PreToolUse.length, 3);
   assert.equal(hooks.PostToolUse.length, 1);
   assert.equal(hooks.Stop.length, 1);
   for (const event of Object.keys(hooks)) {

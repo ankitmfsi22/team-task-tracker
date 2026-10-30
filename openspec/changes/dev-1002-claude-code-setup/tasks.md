@@ -1,5 +1,5 @@
 ## 1. Tests first
-- [x] 1.1 Test-writer: `scripts/claude-hooks.test.mjs` and `scripts/claude-config.test.mjs` for S-DEV1002-01..21 (failing)
+- [x] 1.1 Test-writer: `scripts/claude-hooks.test.mjs` and `scripts/claude-config.test.mjs` for S-DEV1002-01..24 (failing)
 - [x] 1.2 Checkpoint: build, lint, typecheck, test, test:tooling (expected red until 2-4)
 
 ## 2. Enforcement
