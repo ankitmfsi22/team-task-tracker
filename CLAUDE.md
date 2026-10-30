@@ -10,6 +10,8 @@
 5. `/opsx:verify` plus the reviewer sub-agent (fresh context, read-only) writes findings and a PASS or BLOCKING verdict into `review.md`; fix every BLOCKING finding.
 6. `/create-pr`, wait until CI is green, squash merge, then `/opsx:sync` and `/opsx:archive`, then `pnpm spec:validate` and `pnpm check:scenarios`.
 
+Commands, profile setup and the Gate 1 / Gate 2 procedure: README "Workflow"; `pnpm check:changes` enforces the change rules.
+
 Typos, dependency bumps and small fixes may skip the spec. Run `/clear` between tickets.
 
 ## Spec size limits
