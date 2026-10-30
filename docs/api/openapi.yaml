@@ -1,0 +1,125 @@
+openapi: 3.1.0
+info:
+  title: Team Task Tracker API
+  version: 0.1.0
+  summary: REST API of the Team Task Tracker. Only the health endpoint exists so far.
+  description: |
+    OpenAPI 3.1 document for the endpoints of docs/SDS.md section 4. The backend serves it as
+    Swagger UI at `/api/docs` and as JSON at `/api/docs/openapi.json` when `API_DOCS_ENABLED`
+    is true.
+
+    **Errors.** Every non-2xx response has the same body,
+    `{ "error": { "code", "message", "details?", "requestId" } }`, with the codes of
+    docs/SDS.md section 4.2. The executable contracts are the Zod schemas in `packages/shared`;
+    a test fails if a registered route is missing here. Each feature ticket adds its paths.
+servers:
+  - url: /api
+    description: Same-origin API base path
+tags:
+  - name: health
+    description: Liveness check.
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Liveness check
+      description: Returns 200 while the process is serving requests. It does not query the database.
+      tags: [health]
+      security: []
+      responses:
+        '200':
+          description: The API is up.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Short-lived access token returned by the login endpoint (added by a later ticket).
+    refreshCookie:
+      type: apiKey
+      in: cookie
+      name: refresh_token
+      description: HttpOnly rotating refresh token. The browser sends it by itself.
+  responses:
+    InternalError:
+      description: Unexpected server error (`INTERNAL_ERROR`).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          const: ok
+    ErrorCode:
+      type: string
+      description: Stable machine-readable error code. Clients branch on this, never on `message`.
+      enum:
+        - VALIDATION_ERROR
+        - MALFORMED_JSON
+        - UNAUTHORIZED
+        - INVALID_CREDENTIALS
+        - FORBIDDEN
+        - NOT_FOUND
+        - ROUTE_NOT_FOUND
+        - EMAIL_TAKEN
+        - CONFLICT
+        - INVALID_STATUS_TRANSITION
+        - PAYLOAD_TOO_LARGE
+        - INTERNAL_ERROR
+    ErrorDetail:
+      type: object
+      required: [field, message]
+      properties:
+        field:
+          type: string
+          description: Dotted path of the invalid field, for example `assigneeId`.
+        message:
+          type: string
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, requestId]
+          properties:
+            code:
+              $ref: '#/components/schemas/ErrorCode'
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                $ref: '#/components/schemas/ErrorDetail'
+            requestId:
+              type: string
+              description: Echo of the `X-Request-Id` response header.
+    Pagination:
+      type: object
+      required: [page, pageSize, total, totalPages]
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        pageSize:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total:
+          type: integer
+          minimum: 0
+        totalPages:
+          type: integer
+          minimum: 0

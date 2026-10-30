@@ -1,0 +1,2 @@
+# Gitleaks false positives are listed here as <commit>:<file>:<rule>:<line>, with a reason.
+# Empty on purpose: the repository has no known false positives.
