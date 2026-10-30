@@ -8,7 +8,7 @@ context: |
   Contracts: every Zod schema and API type lives in packages/shared. Backend and frontend only import them.
   Size limits (hard): proposal.md at most 15 lines; spec files hold only requirements and scenarios; design.md at most about 30 lines; tasks.md is a short checklist.
   Testing: one named test per scenario, its title starts with the scenario ID, and scripts/check-scenarios.mjs enforces it. Coverage is at least 80% on new code.
-  Approval: implementation starts only after the human writes "approved" in the change's approvals.md.
+  Approval: the human gate is waived on the senior's instruction; approvals.md holds the waiver line and the spec is checked by openspec validate --strict plus a reviewer sub-agent, recorded in review.md.
 
 rules:
   proposal:
@@ -29,7 +29,8 @@ rules:
     - A short checklist, one line per task
     - Write the test for a scenario before its implementation
     - Mark independent tasks [PARALLEL]
-    - End every phase with a build, lint and test checkpoint
+    - End every task group with a checkpoint task (build, lint, typecheck and test)
+    - Create approvals.md (the waiver line) and review.md (reviewer findings and verdict) for every change
 
 operations:
   apply:

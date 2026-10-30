@@ -15,3 +15,9 @@
 - Deny rules in settings.json are the first layer, hooks the second (defence in depth).
 - Waiver wording in approvals.md is fixed text; `config.yaml` Approval line replaced accordingly.
 - Spec tests for docs scenarios (S-DEV1002-15..21) are node tests in `scripts/` asserting file contents and size limits.
+
+## Verification notes (apply)
+
+- Sources: https://code.claude.com/docs/en/hooks (exit 2 blocks PreToolUse and prevents Stop, stderr is the reason, settings format event -> matcher -> hooks, `$CLAUDE_PROJECT_DIR`; `stop_hook_active` is documented for SubagentStop, the Stop section was truncated in the fetch, so the field follows the test contract) and https://code.claude.com/docs/en/settings (allow/ask/deny lists merge; `.claude/settings.json` is the shared project file).
+- Guard is deliberately conservative: any command text naming a secret env file is blocked, even inside a heredoc (seen live while editing this file).
+- Commits: the pre-commit hook runs the whole `test:tooling` suite, so the config test was held out of commit 1 (hooks + settings + hooks test) and added with the docs in commit 2.
