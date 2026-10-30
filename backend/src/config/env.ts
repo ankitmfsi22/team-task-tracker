@@ -1,0 +1,67 @@
+import { z } from 'zod';
+
+// OWASP minimum for Argon2id, enforced in production only (tests use cheap values).
+const ARGON2_MIN_MEMORY_KIB = 19456;
+const ARGON2_MIN_TIME_COST = 2;
+
+const EnvSchema = z
+  .object({
+    NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+    PORT: z.coerce.number().int().min(1).max(65535).default(3000),
+    DATABASE_URL: z.string().regex(/^postgres(ql)?:\/\//, 'must be a PostgreSQL connection URL'),
+    LOG_LEVEL: z
+      .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
+      .default('info'),
+    JWT_ACCESS_SECRET: z
+      .string()
+      .refine((value) => Buffer.byteLength(value) >= 32, 'must be at least 32 bytes'),
+    APP_ORIGIN: z.url(),
+    COOKIE_SECURE: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((value) => value === 'true'),
+    ARGON2_MEMORY_KIB: z.coerce.number().int().positive().default(ARGON2_MIN_MEMORY_KIB),
+    ARGON2_TIME_COST: z.coerce.number().int().positive().default(ARGON2_MIN_TIME_COST),
+    // Swagger UI at /api/docs. Unset means on in development and test, off in production.
+    API_DOCS_ENABLED: z
+      .enum(['true', 'false'])
+      .optional()
+      .transform((value) => (value === undefined ? undefined : value === 'true')),
+  })
+  .superRefine((env, ctx) => {
+    if (env.NODE_ENV !== 'production') return;
+    if (!env.COOKIE_SECURE) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['COOKIE_SECURE'],
+        message: 'must be true in production',
+      });
+    }
+    if (env.ARGON2_MEMORY_KIB < ARGON2_MIN_MEMORY_KIB) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['ARGON2_MEMORY_KIB'],
+        message: `must be at least ${ARGON2_MIN_MEMORY_KIB} in production`,
+      });
+    }
+    if (env.ARGON2_TIME_COST < ARGON2_MIN_TIME_COST) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['ARGON2_TIME_COST'],
+        message: `must be at least ${ARGON2_MIN_TIME_COST} in production`,
+      });
+    }
+  })
+  .transform((env) => ({
+    ...env,
+    API_DOCS_ENABLED: env.API_DOCS_ENABLED ?? env.NODE_ENV !== 'production',
+  }));
+
+export type Env = z.infer<typeof EnvSchema>;
+
+export const loadEnv = (source: NodeJS.ProcessEnv = process.env): Env => {
+  const result = EnvSchema.safeParse(source);
+  if (result.success) return result.data;
+  const lines = result.error.issues.map((issue) => `  ${issue.path.join('.')}: ${issue.message}`);
+  throw new Error(`Invalid environment configuration:\n${lines.join('\n')}`);
+};
