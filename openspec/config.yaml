@@ -35,6 +35,8 @@ rules:
 operations:
   apply:
     guidance:
+      - Apply invokes the test-writer sub-agent first to write the failing tests from the spec scenarios, then implements; commit once per task
+      - After the work, the reviewer sub-agent runs in a fresh context; the coordinator persists its findings to review.md
       - Verify every library API with Context7 before using it
       - Run build, then lint with --max-warnings 0, then typecheck and test, and never continue past a failure
   archive:
