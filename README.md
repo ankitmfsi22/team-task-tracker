@@ -82,7 +82,7 @@ Honest list of where this repo departs from `docs/reference/SDD-GUIDE.md`. Updat
 | # | Deviation | Why |
 | --- | --- | --- |
 | 1 | Gate 2 (code review) was done by the reviewer sub-agent + green CI + self squash-merge, not by a human reading the PR. | Same-day deadline. Each PR carries the reviewer's findings (`review.md`). |
-| 2 | DEV-1001 (bootstrap) and DEV-1002 (proposed before Gate 1 was re-introduced) have no human spec approval. DEV-1001 had no OpenSpec change at all; its change was added retroactively (`archive/2026-10-30-dev-1001-project-setup`). DEV-1002's `approvals.md` carries the waiver line. | DEV-1001 installs OpenSpec itself. DEV-1002 ran under the senior's no-gates instruction. |
+| 2 | DEV-1001 (bootstrap) and DEV-1002 (proposed before Gate 1 was re-introduced) have no human spec approval. DEV-1001 had no OpenSpec change at all; its change was added retroactively (see the status table below). DEV-1002's `approvals.md` carries the waiver line. | DEV-1001 installs OpenSpec itself. DEV-1002 ran under the senior's no-gates instruction. |
 | 3 | Gate 1 for DEV-1003 to DEV-1010 was one batch approval by Ankit, recorded in each `approvals.md`. Later batches follow the same form. | Batch approval instead of per-ticket review, to save time. |
 | 4 | Red test commits are not possible: the pre-commit hook runs the whole tooling suite. Tests are written first by the test-writer but committed together with the implementation of the same task group. | The hook is a quality gate and `--no-verify` is forbidden. |
 | 5 | Archive and the README status row are a separate small PR after each feature PR (guide: sync and archive after merge). | Direct pushes to `main` are forbidden. |
@@ -93,10 +93,10 @@ Honest list of where this repo departs from `docs/reference/SDD-GUIDE.md`. Updat
 
 | Ticket | Linear | OpenSpec change | PR | Status |
 | --- | --- | --- | --- | --- |
-| DEV-1001 Project setup | [DEV-5](https://linear.app/team-task-tracker/issue/DEV-5) | - | - | In progress |
+| DEV-1001 Project setup | [DEV-5](https://linear.app/team-task-tracker/issue/DEV-5) | `dev-1001-project-setup` (retroactive, archived `2026-10-30-dev-1001-project-setup`) | [#1](https://github.com/ankitmfsi22/team-task-tracker/pull/1) | Done |
 | DEV-1002 Claude Code setup | [DEV-6](https://linear.app/team-task-tracker/issue/DEV-6) | `claude-setup` (archived `2026-10-30-dev-1002-claude-code-setup`) | [#2](https://github.com/ankitmfsi22/team-task-tracker/pull/2) | Done |
-| DEV-1003 Autonomous agents | [DEV-7](https://linear.app/team-task-tracker/issue/DEV-7) | - | - | Todo |
 | DEV-1004 MCP integration | [DEV-8](https://linear.app/team-task-tracker/issue/DEV-8) | `dev-1004-mcp-integration` | [#5](https://github.com/ankitmfsi22/team-task-tracker/pull/5) | In progress |
+| DEV-1003 Autonomous agents | [DEV-7](https://linear.app/team-task-tracker/issue/DEV-7) | `dev-1003-agents` | [#4](https://github.com/ankitmfsi22/team-task-tracker/pull/4) | In review |
 | DEV-1005 OpenSpec workflow | [DEV-9](https://linear.app/team-task-tracker/issue/DEV-9) | `dev-1005-openspec-workflow` (archived `2026-10-30-dev-1005-openspec-workflow`) | [#6](https://github.com/ankitmfsi22/team-task-tracker/pull/6) | Done |
 | DEV-1006 Authentication | [DEV-10](https://linear.app/team-task-tracker/issue/DEV-10) | - | - | Todo |
 | DEV-1007 Projects | [DEV-11](https://linear.app/team-task-tracker/issue/DEV-11) | - | - | Todo |
