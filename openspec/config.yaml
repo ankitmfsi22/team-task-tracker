@@ -1,0 +1,41 @@
+schema: spec-driven
+
+context: |
+  Team Task Tracker: a multi-user project and task board. Stack: React 19 + Vite + Tailwind + shadcn/ui + TanStack Query; Node 22 + Express 5 + TypeScript; PostgreSQL 16 + Prisma 7; Zod + OpenAPI 3.1; Vitest + Supertest + Playwright; pnpm workspaces (backend, frontend, packages/shared, e2e).
+  Source of truth, in order: the Linear ticket (requirements), docs/reference/ASSIGNMENT.md, docs/SDS.md (technical, binding). A spec must not contradict the SDS. Mark anything those documents do not decide as [ASSUMPTION - confirm].
+  Naming: the change folder is the lowercase ticket ID plus a slug (dev-1006-auth-register-login), because the OpenSpec CLI rejects uppercase. Scenario IDs are S-DEV<ticket>-<nn>, two digits from 01 (S-DEV1006-01).
+  API: REST under /api. Use only the error codes and statuses of SDS section 4: 401 unauthenticated, 403 not allowed (role), 404 not found or not a member, 409 conflict, 422 validation.
+  Contracts: every Zod schema and API type lives in packages/shared. Backend and frontend only import them.
+  Size limits (hard): proposal.md at most 15 lines; spec files hold only requirements and scenarios; design.md at most about 30 lines; tasks.md is a short checklist.
+  Testing: one named test per scenario, its title starts with the scenario ID, and scripts/check-scenarios.mjs enforces it. Coverage is at least 80% on new code.
+  Approval: implementation starts only after the human writes "approved" in the change's approvals.md.
+
+rules:
+  proposal:
+    - At most 15 lines. Link the ticket ID, list what changes, what is out of scope and the rollback
+  specs:
+    - Only requirements and scenarios, no prose, no design talk
+    - Start a delta that creates a new capability with a ## Purpose section, because archiving otherwise writes a TBD placeholder that openspec validate --strict rejects
+    - Name scenarios S-DEV<ticket>-<nn> and write them in WHEN/THEN form
+    - One named test per scenario
+    - Include an authorization-denied and a validation-failure scenario for every endpoint, or say why one does not apply
+    - Name the exact HTTP status and error code in every error scenario
+  design:
+    - At most about 30 lines
+    - Define request and response schemas in packages/shared first
+    - Follow routes, controller, service, repository, with Prisma only in repositories
+    - Take every endpoint, status and error code from the SDS and do not invent one
+  tasks:
+    - A short checklist, one line per task
+    - Write the test for a scenario before its implementation
+    - Mark independent tasks [PARALLEL]
+    - End every phase with a build, lint and test checkpoint
+
+operations:
+  apply:
+    guidance:
+      - Verify every library API with Context7 before using it
+      - Run build, then lint with --max-warnings 0, then typecheck and test, and never continue past a failure
+  archive:
+    guidance:
+      - Archive before opening the pull request, and run pnpm spec:validate and pnpm check:scenarios afterwards
