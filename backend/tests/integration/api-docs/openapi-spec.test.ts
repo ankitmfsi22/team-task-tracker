@@ -103,7 +103,8 @@ describe('docs/api/openapi.yaml', () => {
       'Express routes missing from the spec',
     ).toEqual([]);
 
-    expect(registered).toHaveLength(1);
-    expect(documented).toHaveLength(1);
+    // health + register, login, refresh, logout, me
+    expect(registered).toHaveLength(6);
+    expect(documented).toHaveLength(6);
   });
 });

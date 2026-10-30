@@ -1,2 +1,5 @@
 # Gitleaks false positives are listed here as <commit>:<file>:<rule>:<line>, with a reason.
-# Empty on purpose: the repository has no known false positives.
+# test fixture: fake signing secret / fake user id for the invalid-token test, not a real secret
+cd6dca484142405320c1463fff5027083e2e669f:backend/tests/integration/auth/auth.test.ts:generic-api-key:332
+# test fixture: fake hash values in the S-DEV1006-27 redaction test, not real secrets
+994bb5fd82262a750c272cf6cc264ce4c274d60c:backend/src/common/errors/error-middleware.test.ts:generic-api-key:83

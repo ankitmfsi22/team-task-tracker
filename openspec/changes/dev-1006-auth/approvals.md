@@ -1,0 +1,1 @@
+Approved by Ankit on 2026-10-30 (Gate 1, batch approval of DEV-1003 to DEV-1010; confirmations: bootstrap form accepted, UNAUTHORIZED, refresh-reuse logs out all devices, new error codes added to SDS and shared enum, 409 INVALID_TRANSITION with SDS updated to 409, MEMBER task-edit rule and same-status PATCH = 409, 422 for invalid query params).

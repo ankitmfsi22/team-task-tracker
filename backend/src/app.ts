@@ -5,8 +5,16 @@ import type { Logger } from 'pino';
 import type { Clock } from './common/clock.js';
 import { createErrorHandler, notFoundHandler } from './common/errors/error-middleware.js';
 import { createRequestLogger } from './common/http/request-logging.js';
+import { createRequireAuth } from './common/http/require-auth.js';
+import { createRequireOrigin } from './common/http/require-origin.js';
 import type { Env } from './config/env.js';
 import type { PrismaClient } from './generated/prisma/client.js';
+import { createAccessTokenService } from './modules/auth/access-token.js';
+import { createAuthController } from './modules/auth/auth.controller.js';
+import { createAuthRepository } from './modules/auth/auth.repository.js';
+import { createAuthRouter } from './modules/auth/auth.routes.js';
+import { createAuthService } from './modules/auth/auth.service.js';
+import { createPasswordHasher } from './modules/auth/password.js';
 import { createDocsRouter } from './modules/docs/docs.routes.js';
 import { loadOpenApiDocument, type OpenApiDocument } from './modules/docs/openapi-document.js';
 import { createHealthController } from './modules/health/health.controller.js';
@@ -42,6 +50,21 @@ export const createApp = (deps: AppDeps): Express => {
   // Routes -> controller -> service -> repository. Modules are wired here, one block per module.
   const healthController = createHealthController({ service: createHealthService() });
   app.use('/api', createHealthRouter({ controller: healthController }));
+
+  const authService = createAuthService({
+    repository: createAuthRepository({ prisma: deps.prisma }),
+    clock: deps.clock,
+    passwords: createPasswordHasher(deps.env),
+    tokens: createAccessTokenService(deps.env),
+  });
+  app.use(
+    '/api/auth',
+    createAuthRouter({
+      controller: createAuthController({ service: authService, env: deps.env }),
+      requireAuth: createRequireAuth({ env: deps.env }),
+      requireOrigin: createRequireOrigin({ env: deps.env }),
+    }),
+  );
 
   app.use(notFoundHandler);
   app.use(createErrorHandler(deps.logger));

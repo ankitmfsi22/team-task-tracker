@@ -98,7 +98,7 @@ Honest list of where this repo departs from `docs/reference/SDD-GUIDE.md`. Updat
 | DEV-1003 Autonomous agents | [DEV-7](https://linear.app/team-task-tracker/issue/DEV-7) | `dev-1003-agents` (archived `2026-10-30-dev-1003-agents`) | [#4](https://github.com/ankitmfsi22/team-task-tracker/pull/4) | Done |
 | DEV-1004 MCP integration | [DEV-8](https://linear.app/team-task-tracker/issue/DEV-8) | `dev-1004-mcp-integration` (archived `2026-10-30-dev-1004-mcp-integration`) | [#5](https://github.com/ankitmfsi22/team-task-tracker/pull/5) | Done |
 | DEV-1005 OpenSpec workflow | [DEV-9](https://linear.app/team-task-tracker/issue/DEV-9) | `dev-1005-openspec-workflow` (archived `2026-10-30-dev-1005-openspec-workflow`) | [#6](https://github.com/ankitmfsi22/team-task-tracker/pull/6) | Done |
-| DEV-1006 Authentication | [DEV-10](https://linear.app/team-task-tracker/issue/DEV-10) | - | - | Todo |
+| DEV-1006 Authentication | [DEV-10](https://linear.app/team-task-tracker/issue/DEV-10) | `dev-1006-auth` | [#7](https://github.com/ankitmfsi22/team-task-tracker/pull/7) | In progress |
 | DEV-1007 Projects | [DEV-11](https://linear.app/team-task-tracker/issue/DEV-11) | - | - | Todo |
 | DEV-1008 Tasks | [DEV-12](https://linear.app/team-task-tracker/issue/DEV-12) | - | - | Todo |
 | DEV-1009 Task filtering | [DEV-13](https://linear.app/team-task-tracker/issue/DEV-13) | - | - | Todo |

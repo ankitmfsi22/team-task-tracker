@@ -75,6 +75,28 @@ describe('error middleware', () => {
     expect(logs.text()).toContain('hunter2');
   });
 
+  it('S-DEV1006-27 error log redacts Prisma meta', async () => {
+    const { app, logs } = buildApp((a) =>
+      a.get('/x', () => {
+        throw Object.assign(new Error('Unique constraint failed'), {
+          code: 'P2002',
+          meta: {
+            passwordHash: ['fake', 'password', 'hash'].join('-'),
+            tokenHash: ['fake', 'token', 'hash'].join('-'),
+          },
+        });
+      }),
+    );
+    const response = await request(app).get('/x').expect(500);
+    expect(ErrorResponseSchema.parse(response.body).error.code).toBe('INTERNAL_ERROR');
+    const text = logs.text();
+    expect(text).toContain('unhandled error');
+    expect(text).toContain('Unique constraint failed');
+    expect(text).toContain('P2002');
+    expect(text).not.toContain('fake-password-hash');
+    expect(text).not.toContain(['fake', 'token', 'hash'].join('-'));
+  });
+
   it('treats a stray ZodError as a server bug (500), not as a client validation error', async () => {
     const { app } = buildApp((a) =>
       a.get('/x', () => {
