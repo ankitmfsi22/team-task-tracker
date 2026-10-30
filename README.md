@@ -87,6 +87,7 @@ Honest list of where this repo departs from `docs/reference/SDD-GUIDE.md`. Updat
 | 4 | Red test commits are not possible: the pre-commit hook runs the whole tooling suite. Tests are written first by the test-writer but committed together with the implementation of the same task group. | The hook is a quality gate and `--no-verify` is forbidden. |
 | 5 | Archive and the README status row are a separate small PR after each feature PR (guide: sync and archive after merge). | Direct pushes to `main` are forbidden. |
 | 6 | Where the SDS and a Linear ticket disagreed, the SDS won (422 for validation). Exception: DEV-1008 uses 409 `INVALID_TRANSITION`, and the SDS was updated to match. | Ankit's confirmations at Gate 1. |
+| 7 | Merge order was not strictly ticket order: DEV-1005 (PR #6) merged before DEV-1003 (#4) and DEV-1004 (#5), because it only depends on DEV-1002. The three branches were developed in parallel worktrees, so each merged `main` into its branch before its own merge (plain pushes, no force-push). | Their dependencies allow it, and it saved time. |
 
 ## Ticket status
 
@@ -96,7 +97,7 @@ Honest list of where this repo departs from `docs/reference/SDD-GUIDE.md`. Updat
 | DEV-1002 Claude Code setup | [DEV-6](https://linear.app/team-task-tracker/issue/DEV-6) | `claude-setup` (archived `2026-10-30-dev-1002-claude-code-setup`) | [#2](https://github.com/ankitmfsi22/team-task-tracker/pull/2) | Done |
 | DEV-1003 Autonomous agents | [DEV-7](https://linear.app/team-task-tracker/issue/DEV-7) | - | - | Todo |
 | DEV-1004 MCP integration | [DEV-8](https://linear.app/team-task-tracker/issue/DEV-8) | `dev-1004-mcp-integration` | [#5](https://github.com/ankitmfsi22/team-task-tracker/pull/5) | In progress |
-| DEV-1005 OpenSpec workflow | [DEV-9](https://linear.app/team-task-tracker/issue/DEV-9) | `dev-1005-openspec-workflow` | - | In progress |
+| DEV-1005 OpenSpec workflow | [DEV-9](https://linear.app/team-task-tracker/issue/DEV-9) | `dev-1005-openspec-workflow` (archived `2026-10-30-dev-1005-openspec-workflow`) | [#6](https://github.com/ankitmfsi22/team-task-tracker/pull/6) | Done |
 | DEV-1006 Authentication | [DEV-10](https://linear.app/team-task-tracker/issue/DEV-10) | - | - | Todo |
 | DEV-1007 Projects | [DEV-11](https://linear.app/team-task-tracker/issue/DEV-11) | - | - | Todo |
 | DEV-1008 Tasks | [DEV-12](https://linear.app/team-task-tracker/issue/DEV-12) | - | - | Todo |
