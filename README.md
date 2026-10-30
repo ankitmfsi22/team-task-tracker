@@ -36,6 +36,7 @@ Seeded demo accounts (local only): `owner@example.com` and `member@example.com`,
 | `pnpm test:e2e` | Playwright smoke tests (Vite + backend on their own ports, `tasktracker_e2e` database) |
 | `pnpm spec:validate` | `openspec validate --all --strict` (skipped while there are no specs) |
 | `pnpm check:scenarios` | Every spec scenario has exactly one test titled `S-DEV<ticket>-<nn>` |
+| `pnpm check:changes` | OpenSpec change rules: size limits, Linear link, approvals, review verdict, README status table (`--ready` is strict) |
 | `pnpm perf:lighthouse` | Lighthouse on the production build (needs `pnpm build`) |
 | `pnpm db:up` / `pnpm db:down` | Start / stop the dev and test databases |
 
@@ -45,7 +46,47 @@ REST under `/api`. Swagger UI: http://localhost:3000/api/docs (http://localhost:
 
 ## Workflow
 
-Requirements live in Linear. For each ticket: fetch it through the Linear MCP, `/opsx:propose` a change, get the human `approved` in the change's `approvals.md`, `/opsx:apply`, `/opsx:verify`, `/opsx:archive`, then one pull request. Commits are `type(scope): description DEV-10xx` on branches `feature/<domain>/DEV-10xx-short-name`; Husky and commitlint enforce it, CI runs verify, e2e, gitleaks and a commit check. See `CLAUDE.md`; MCP setup and failure handling are in `docs/MCP.md`.
+Requirements live in Linear. Per ticket: fetch it through the Linear MCP, `/opsx:propose` a change, get Gate 1, `/opsx:apply`, `/opsx:verify`, reviewer sub-agent, one pull request (Gate 2), then sync and archive. Commits are `type(scope): description DEV-10xx` on branches `feature/<domain>/DEV-10xx-short-name`; Husky and commitlint enforce it, CI runs verify, e2e, gitleaks and a commit check. See `CLAUDE.md`; MCP setup and failure handling are in `docs/MCP.md`.
+
+### OpenSpec commands
+
+The 12 native commands in `.claude/commands/opsx/` (the expanded profile):
+
+| Command | Use |
+| --- | --- |
+| `/opsx:propose` | Create a change with proposal, specs, design and tasks in one step |
+| `/opsx:explore` | Think through an idea or problem before or during a change |
+| `/opsx:new` | Start a change and create artifacts one by one |
+| `/opsx:continue` | Create the next artifact of a change |
+| `/opsx:ff` | Create all planning artifacts in one go |
+| `/opsx:apply` | Implement the tasks |
+| `/opsx:verify` | Check the implementation against the change artifacts |
+| `/opsx:sync` | Sync delta specs into the main specs |
+| `/opsx:archive` | Archive a finished change |
+| `/opsx:bulk-archive` | Archive several finished changes |
+| `/opsx:update` | Revise planning artifacts and keep them coherent |
+| `/opsx:onboard` | Guided walk through one full cycle |
+
+Select the expanded profile with `pnpm exec openspec config profile`, then run `pnpm exec openspec update` to regenerate the commands and skills under `.claude/`. In OpenSpec 1.15.0 the profile is stored in the global config `~/.config/openspec/config.json`, not in the repository, so each machine needs this step once.
+
+### Approval gates
+
+- Gate 1 (spec): the proposed changes of a batch are approved together. `approvals.md` then reads `Approved by <name> on <date>` (the bootstrap form and the senior's waiver sentence are also accepted). `Status: PENDING human Gate 1 (batch approval)` is allowed only while the change is a draft.
+- Gate 2 (merge): the reviewer sub-agent reports no blockers (`Verdict:` line in `review.md`), CI is green, then squash merge with `gh pr merge <n> --squash --delete-branch`.
+- After the merge: `/opsx:sync` and `/opsx:archive`, update the status table row below, and run `pnpm spec:validate`, `pnpm check:scenarios` and `pnpm check:changes`.
+
+## Deviations from the guide
+
+Honest list of where this repo departs from `docs/reference/SDD-GUIDE.md`. Updated as we go.
+
+| # | Deviation | Why |
+| --- | --- | --- |
+| 1 | Gate 2 (code review) was done by the reviewer sub-agent + green CI + self squash-merge, not by a human reading the PR. | Same-day deadline. Each PR carries the reviewer's findings (`review.md`). |
+| 2 | DEV-1001 (bootstrap) and DEV-1002 (proposed before Gate 1 was re-introduced) have no human spec approval. DEV-1001 had no OpenSpec change at all; its change was added retroactively (`archive/2026-10-30-dev-1001-project-setup`). DEV-1002's `approvals.md` carries the waiver line. | DEV-1001 installs OpenSpec itself. DEV-1002 ran under the senior's no-gates instruction. |
+| 3 | Gate 1 for DEV-1003 to DEV-1010 was one batch approval by Ankit, recorded in each `approvals.md`. Later batches follow the same form. | Batch approval instead of per-ticket review, to save time. |
+| 4 | Red test commits are not possible: the pre-commit hook runs the whole tooling suite. Tests are written first by the test-writer but committed together with the implementation of the same task group. | The hook is a quality gate and `--no-verify` is forbidden. |
+| 5 | Archive and the README status row are a separate small PR after each feature PR (guide: sync and archive after merge). | Direct pushes to `main` are forbidden. |
+| 6 | Where the SDS and a Linear ticket disagreed, the SDS won (422 for validation). Exception: DEV-1008 uses 409 `INVALID_TRANSITION`, and the SDS was updated to match. | Ankit's confirmations at Gate 1. |
 
 ## Ticket status
 
@@ -54,8 +95,8 @@ Requirements live in Linear. For each ticket: fetch it through the Linear MCP, `
 | DEV-1001 Project setup | [DEV-5](https://linear.app/team-task-tracker/issue/DEV-5) | - | - | In progress |
 | DEV-1002 Claude Code setup | [DEV-6](https://linear.app/team-task-tracker/issue/DEV-6) | `claude-setup` (archived `2026-10-30-dev-1002-claude-code-setup`) | [#2](https://github.com/ankitmfsi22/team-task-tracker/pull/2) | Done |
 | DEV-1003 Autonomous agents | [DEV-7](https://linear.app/team-task-tracker/issue/DEV-7) | - | - | Todo |
-| DEV-1004 MCP integration | [DEV-8](https://linear.app/team-task-tracker/issue/DEV-8) | - | - | Todo |
-| DEV-1005 OpenSpec workflow | [DEV-9](https://linear.app/team-task-tracker/issue/DEV-9) | - | - | Todo |
+| DEV-1004 MCP integration | [DEV-8](https://linear.app/team-task-tracker/issue/DEV-8) | `dev-1004-mcp-integration` | [#5](https://github.com/ankitmfsi22/team-task-tracker/pull/5) | In progress |
+| DEV-1005 OpenSpec workflow | [DEV-9](https://linear.app/team-task-tracker/issue/DEV-9) | `dev-1005-openspec-workflow` | - | In progress |
 | DEV-1006 Authentication | [DEV-10](https://linear.app/team-task-tracker/issue/DEV-10) | - | - | Todo |
 | DEV-1007 Projects | [DEV-11](https://linear.app/team-task-tracker/issue/DEV-11) | - | - | Todo |
 | DEV-1008 Tasks | [DEV-12](https://linear.app/team-task-tracker/issue/DEV-12) | - | - | Todo |
