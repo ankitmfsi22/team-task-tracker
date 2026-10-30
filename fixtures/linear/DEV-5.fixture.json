@@ -1,0 +1,11 @@
+{
+  "source": "FIXTURE - NOT LIVE LINEAR DATA",
+  "capturedAt": "2026-10-30T11:08Z",
+  "id": "DEV-5",
+  "title": "DEV-1001 — Project setup",
+  "status": "Backlog",
+  "priority": "High",
+  "project": "Team Task Tracker",
+  "url": "https://linear.app/team-task-tracker/issue/DEV-5/dev-1001-project-setup",
+  "description": "Monorepo, Docker Compose, Prisma, OpenSpec, project instructions and quality checks."
+}
