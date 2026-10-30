@@ -1,0 +1,85 @@
+services:
+  # Profile `dev` keeps these out of `--profile full` runs (host ports 5432/5433 would clash).
+  # `pnpm db:up` and `pnpm db:down` pass --profile dev.
+  db-dev:
+    profiles: ['dev']
+    image: postgres:16.15-bookworm
+    environment:
+      POSTGRES_USER: tasktracker
+      POSTGRES_PASSWORD: tasktracker_dev_only
+      POSTGRES_DB: tasktracker_dev
+    ports: ['5432:5432']
+    volumes: ['tasktracker_dev_data:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U tasktracker -d tasktracker_dev']
+      interval: 2s
+      retries: 20
+  db-test:
+    profiles: ['dev']
+    image: postgres:16.15-bookworm
+    environment:
+      POSTGRES_USER: tasktracker
+      POSTGRES_PASSWORD: tasktracker_test_only
+      POSTGRES_DB: tasktracker_test
+    ports: ['5433:5432']
+    tmpfs: ['/var/lib/postgresql/data']
+    volumes: ['./docker/postgres/init-test.sql:/docker-entrypoint-initdb.d/init-test.sql:ro']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U tasktracker -d tasktracker_test']
+      interval: 2s
+      retries: 20
+
+  # Profile `full`: the whole app. `docker compose --profile full up --build`, then open
+  # http://localhost:8080. Secrets come from the root env file (see .env.example); nothing but
+  # the frontend is published to the host.
+  db:
+    profiles: ['full']
+    image: postgres:16.15-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tasktracker
+      POSTGRES_PASSWORD: ${DOCKER_DB_PASSWORD:-tasktracker_docker_only}
+      POSTGRES_DB: tasktracker
+    volumes: ['tasktracker_full_data:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U tasktracker -d tasktracker']
+      interval: 3s
+      retries: 20
+  backend:
+    profiles: ['full']
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: tasktracker-backend:1.0.0
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: '3000'
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DATABASE_URL: postgresql://tasktracker:${DOCKER_DB_PASSWORD:-tasktracker_docker_only}@db:5432/tasktracker
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?set JWT_ACCESS_SECRET}
+      # The browser origin is the nginx frontend, not the Vite dev server.
+      APP_ORIGIN: ${DOCKER_APP_ORIGIN:-http://localhost:8080}
+      # Production requires Secure cookies; browsers accept them on http://localhost.
+      COOKIE_SECURE: 'true'
+      # Swagger UI at /api/docs (off by default in production).
+      API_DOCS_ENABLED: 'true'
+      ARGON2_MEMORY_KIB: ${ARGON2_MEMORY_KIB:-19456}
+      ARGON2_TIME_COST: ${ARGON2_TIME_COST:-2}
+  frontend:
+    profiles: ['full']
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: tasktracker-frontend:1.0.0
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports: ['8080:8080']
+volumes:
+  tasktracker_dev_data:
+  tasktracker_full_data:
