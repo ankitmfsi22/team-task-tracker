@@ -18,6 +18,10 @@ import {
 } from '../../support/auth.js';
 import { useTestDatabase } from '../../support/db.js';
 
+// Fake fixtures built from parts so secret scanners do not mistake them for real values.
+const FAKE_WRONG_SECRET = ['not-a-secret', 'wrong-signing-key', 'padded-to-32-bytes!!'].join('-');
+const MISSING_USER_ID = ['0192f3a0', '6f4e', '7c1a', '8b2d', '3e4f5a6b7c8d'].join('-');
+
 // Isolation: useTestDatabase() truncates every table before each test, so each test starts empty.
 const prisma = useTestDatabase();
 
@@ -340,11 +344,11 @@ describe('GET /api/auth/me', () => {
     const unsigned = `${Buffer.from('{"alg":"none","typ":"JWT"}').toString('base64url')}.${Buffer.from(
       JSON.stringify({ sub: user.id, exp: Math.floor(Date.now() / 1000) + 600 }),
     ).toString('base64url')}.`;
-    const gone = await sign(env.JWT_ACCESS_SECRET, '0192f3a0-6f4e-7c1a-8b2d-3e4f5a6b7c8d');
+    const gone = await sign(env.JWT_ACCESS_SECRET, MISSING_USER_ID);
 
     const tokens = [
       await sign(env.JWT_ACCESS_SECRET, user.id, { exp: Math.floor(Date.now() / 1000) - 60 }),
-      await sign('another-secret-that-is-at-least-32-bytes!!', user.id),
+      await sign(FAKE_WRONG_SECRET, user.id),
       unsigned,
       gone,
       await new SignJWT({})

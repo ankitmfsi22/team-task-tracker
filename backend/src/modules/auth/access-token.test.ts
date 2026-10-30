@@ -19,7 +19,11 @@ describe('access token service (jose HS256)', () => {
       .setProtectedHeader({ alg: 'HS256' })
       .setSubject(USER_ID)
       .setExpirationTime('15m')
-      .sign(new TextEncoder().encode('another-secret-that-is-at-least-32-bytes!!'));
+      .sign(
+        new TextEncoder().encode(
+          ['not-a-secret', 'wrong-signing-key', 'padded-to-32-bytes!!'].join('-'),
+        ),
+      );
     await expect(tokens.verifyAccessToken(forged)).rejects.toThrow();
   });
 

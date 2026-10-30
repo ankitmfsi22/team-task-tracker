@@ -23,6 +23,8 @@ Columns: date | reviewer | severity | file:line | finding | resolution.
 | 2026-10-30 | security-auditor | low | backend/src/modules/auth/auth.routes.ts:15 | `requireOrigin` not applied to /login and /register | Skipped: APP_ORIGIN is the Vite origin, so same-origin Swagger UI (API origin) and curl/E2E calls without a matching Origin would get 403. Accepted: SameSite=Strict + JSON content-type |
 | 2026-10-30 | security-auditor | info | backend/src/modules/auth/access-token.ts | No iss/aud claims; access tokens not revocable for up to 15 min | Accepted and documented in design.md |
 
+CI gitleaks: the `security` job flagged a fake signing secret/user id literal in the auth integration test (`cd6dca4`, auth.test.ts:332, generic-api-key). Fixed: fixtures now built from parts in the tests, and history fingerprints allowlisted in `.gitleaksignore` (no history rewrite).
+
 ## Run 3: verify (/opsx:verify, 2026-10-30)
 
 Linear DEV-10 acceptance criteria:

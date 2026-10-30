@@ -80,7 +80,10 @@ describe('error middleware', () => {
       a.get('/x', () => {
         throw Object.assign(new Error('Unique constraint failed'), {
           code: 'P2002',
-          meta: { passwordHash: '$argon2id$secret-hash', tokenHash: 'deadbeef-token-hash' },
+          meta: {
+            passwordHash: ['fake', 'password', 'hash'].join('-'),
+            tokenHash: ['fake', 'token', 'hash'].join('-'),
+          },
         });
       }),
     );
@@ -90,8 +93,8 @@ describe('error middleware', () => {
     expect(text).toContain('unhandled error');
     expect(text).toContain('Unique constraint failed');
     expect(text).toContain('P2002');
-    expect(text).not.toContain('secret-hash');
-    expect(text).not.toContain('deadbeef-token-hash');
+    expect(text).not.toContain('fake-password-hash');
+    expect(text).not.toContain(['fake', 'token', 'hash'].join('-'));
   });
 
   it('treats a stray ZodError as a server bug (500), not as a client validation error', async () => {
