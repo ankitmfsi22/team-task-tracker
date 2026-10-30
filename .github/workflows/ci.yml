@@ -6,6 +6,7 @@ name: CI
 # dereferenced commit SHA.
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches: ['feature/**']
 
@@ -44,10 +45,13 @@ jobs:
       - run: pnpm build
       - run: pnpm lint --max-warnings 0
       - run: pnpm format:check
+      - run: pnpm typecheck
       - run: pnpm test --coverage
       - run: pnpm test:tooling
       - run: pnpm spec:validate
       - run: pnpm check:scenarios
+      - name: Check OpenSpec changes (strict on non-draft PRs)
+        run: pnpm check:changes ${{ github.event_name == 'pull_request' && !github.event.pull_request.draft && '--ready' || '' }}
 
   commits:
     if: github.event_name == 'pull_request'
