@@ -82,7 +82,7 @@ Honest list of where this repo departs from `docs/reference/SDD-GUIDE.md`. Updat
 | # | Deviation | Why |
 | --- | --- | --- |
 | 1 | Gate 2 (code review) was done by the reviewer sub-agent + green CI + self squash-merge, not by a human reading the PR. | Same-day deadline. Each PR carries the reviewer's findings (`review.md`). |
-| 2 | DEV-1001 (bootstrap) and DEV-1002 (proposed before Gate 1 was re-introduced) have no human spec approval. DEV-1001 had no OpenSpec change at all; its change was added retroactively (`archive/2026-10-30-dev-1001-project-setup`). DEV-1002's `approvals.md` carries the waiver line. | DEV-1001 installs OpenSpec itself. DEV-1002 ran under the senior's no-gates instruction. |
+| 2 | DEV-1001 (bootstrap) and DEV-1002 (proposed before Gate 1 was re-introduced) have no human spec approval. DEV-1001 had no OpenSpec change at all; its change was added retroactively (see the status table below). DEV-1002's `approvals.md` carries the waiver line. | DEV-1001 installs OpenSpec itself. DEV-1002 ran under the senior's no-gates instruction. |
 | 3 | Gate 1 for DEV-1003 to DEV-1010 was one batch approval by Ankit, recorded in each `approvals.md`. Later batches follow the same form. | Batch approval instead of per-ticket review, to save time. |
 | 4 | Red test commits are not possible: the pre-commit hook runs the whole tooling suite. Tests are written first by the test-writer but committed together with the implementation of the same task group. | The hook is a quality gate and `--no-verify` is forbidden. |
 | 5 | Archive and the README status row are a separate small PR after each feature PR (guide: sync and archive after merge). | Direct pushes to `main` are forbidden. |
