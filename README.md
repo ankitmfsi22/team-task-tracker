@@ -92,9 +92,9 @@ Honest list of where this repo departs from `docs/reference/SDD-GUIDE.md`. Updat
 
 | Ticket | Linear | OpenSpec change | PR | Status |
 | --- | --- | --- | --- | --- |
-| DEV-1001 Project setup | [DEV-5](https://linear.app/team-task-tracker/issue/DEV-5) | - | - | In progress |
+| DEV-1001 Project setup | [DEV-5](https://linear.app/team-task-tracker/issue/DEV-5) | `dev-1001-project-setup` (retroactive, archived `2026-10-30-dev-1001-project-setup`) | [#1](https://github.com/ankitmfsi22/team-task-tracker/pull/1) | Done |
 | DEV-1002 Claude Code setup | [DEV-6](https://linear.app/team-task-tracker/issue/DEV-6) | `claude-setup` (archived `2026-10-30-dev-1002-claude-code-setup`) | [#2](https://github.com/ankitmfsi22/team-task-tracker/pull/2) | Done |
-| DEV-1003 Autonomous agents | [DEV-7](https://linear.app/team-task-tracker/issue/DEV-7) | - | - | Todo |
+| DEV-1003 Autonomous agents | [DEV-7](https://linear.app/team-task-tracker/issue/DEV-7) | `dev-1003-agents` | [#4](https://github.com/ankitmfsi22/team-task-tracker/pull/4) | In review |
 | DEV-1004 MCP integration | [DEV-8](https://linear.app/team-task-tracker/issue/DEV-8) | - | - | Todo |
 | DEV-1005 OpenSpec workflow | [DEV-9](https://linear.app/team-task-tracker/issue/DEV-9) | `dev-1005-openspec-workflow` (archived `2026-10-30-dev-1005-openspec-workflow`) | [#6](https://github.com/ankitmfsi22/team-task-tracker/pull/6) | Done |
 | DEV-1006 Authentication | [DEV-10](https://linear.app/team-task-tracker/issue/DEV-10) | - | - | Todo |
