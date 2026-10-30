@@ -1,2 +1,4 @@
 # Gitleaks false positives are listed here as <commit>:<file>:<rule>:<line>, with a reason.
 # Empty on purpose: the repository has no known false positives.
+# Fake hash values in the S-DEV1006-27 redaction test, not real secrets.
+994bb5fd82262a750c272cf6cc264ce4c274d60c:tsneric-api-key:83
