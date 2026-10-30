@@ -3,12 +3,12 @@
 
 ## Workflow (spec-driven, one ticket per session)
 
-1. Fetch the ticket first with the Linear MCP tool `mcp__linear-server__get_issue`. The Linear id is `DEV-(n-1000+4)`, so `DEV-1001` is Linear `DEV-5`. Verify the key and its dependencies.
-2. `/opsx:propose dev-10xx-short-name` writes the change under `openspec/changes/`. Then STOP.
-3. Human approval: the user writes `approved` in the change's `approvals.md`. Never write it yourself, never skip the gate.
-4. `/opsx:apply` implements the tasks, tests first, with a build, lint and test checkpoint per phase.
-5. `/opsx:verify` checks the code against the change; fix every finding.
-6. `/opsx:archive`, then `pnpm spec:validate` and `pnpm check:scenarios`, then open the pull request.
+1. Fetch the ticket with `mcp__linear-server__get_issue` (Linear id `DEV-(n-1000+4)`, so `DEV-1001` is Linear `DEV-5`). Verify the key and its dependencies.
+2. `/opsx:explore`, then `/opsx:propose dev-10xx-short-name`: writes proposal, specs, design, tasks, plus `approvals.md` and a `review.md` stub. `pnpm exec openspec validate <change> --strict` must pass.
+3. Approval: the human gate is waived on the senior's instruction. `approvals.md` holds exactly: `Human gate waived on senior's instruction; spec checked by openspec validate --strict + reviewer sub-agent`. Never claim a human approved.
+4. `/opsx:apply`: the test-writer agent writes the failing tests first, then implement, one commit per task, with a build, lint and test checkpoint per phase.
+5. `/opsx:verify` plus the reviewer sub-agent (fresh context, read-only) writes findings and a PASS or BLOCKING verdict into `review.md`; fix every BLOCKING finding.
+6. `/create-pr`, wait until CI is green, squash merge, then `/opsx:sync` and `/opsx:archive`, then `pnpm spec:validate` and `pnpm check:scenarios`.
 
 Typos, dependency bumps and small fixes may skip the spec. Run `/clear` between tickets.
 
@@ -31,4 +31,5 @@ Typos, dependency bumps and small fixes may skip the spec. Run `/clear` between 
 ## Where to look
 
 - Error codes, roles, status transitions, auth: `docs/SDS.md`. Endpoints: `docs/api/openapi.yaml` (also `/api/docs`).
-- OpenSpec commands live in `.claude/commands/opsx/`, skills in `.claude/skills/openspec-*`.
+- OpenSpec commands live in `.claude/commands/opsx/`, plus `/create-pr`; skills in `.claude/skills/`.
+- Hooks in `.claude/hooks/` (guard, format, stop) and permissions in `.claude/settings.json`. Layer rules: `backend/`, `frontend/`, `packages/shared/` `CLAUDE.md`. Requirements index: `docs/FRS.md`.
