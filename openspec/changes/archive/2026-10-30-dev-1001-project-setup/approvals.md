@@ -1,0 +1,1 @@
+Bootstrap change, no human gate: DEV-1001 installs OpenSpec itself; retroactive record
