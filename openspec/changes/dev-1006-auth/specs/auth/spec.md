@@ -52,6 +52,28 @@ The `RegisterInput`, `LoginInput`, `AuthUser` and `AuthResponse` Zod schemas SHA
 - WHEN the body is missing the password or has a malformed email
 - THEN the response is 422 `VALIDATION_ERROR`
 
+### Requirement: Production configuration
+In production the API SHALL refuse to start with a `JWT_ACCESS_SECRET` containing `replace-me`.
+
+#### Scenario: S-DEV1006-26 placeholder JWT secret rejected in production
+- WHEN `NODE_ENV=production` and `JWT_ACCESS_SECRET` contains `replace-me`
+- THEN `loadEnv` throws naming `JWT_ACCESS_SECRET`, while the same value is accepted outside production
+
+### Requirement: Error logging
+The error handler SHALL NOT log `err.meta` (Prisma metadata may carry `passwordHash` or `tokenHash`); it logs only name, code, message and stack.
+
+#### Scenario: S-DEV1006-27 error log redacts Prisma meta
+- WHEN a handler throws an error whose `meta` contains `passwordHash` and `tokenHash` values
+- THEN the response is 500 `INTERNAL_ERROR` and the log line has the error name, code and message but none of the meta values
+
+### Requirement: Login timing parity
+Both login failure paths SHALL verify against an Argon2 hash, and the dummy hash SHALL be created when the service is created.
+
+#### Scenario: S-DEV1006-28 both failure paths verify against a hash
+- WHEN the service is created
+- THEN the dummy hash is already computed (not lazily on first use)
+- AND an unknown email and a wrong password each verify against a hash
+
 ### Requirement: Access token
 The access token SHALL be an HS256 JWT signed with `JWT_ACCESS_SECRET`, expire after 900 seconds, carry the user id as `sub`, and be returned only in the response body.
 
@@ -93,6 +115,10 @@ The refresh token SHALL be an opaque random value in an `HttpOnly`, `SameSite=St
 - WHEN refresh is posted with an extra JSON body
 - THEN the body is ignored (validation does not apply; the cookie is the only input) and the outcome follows S-DEV1006-12
 
+#### Scenario: S-DEV1006-25 concurrent refresh with one cookie
+- WHEN two refresh requests with the same valid cookie run concurrently
+- THEN exactly one responds 200 and the other 401 `UNAUTHORIZED`
+
 ### Requirement: Logout
 `POST /api/auth/logout` SHALL revoke the presented refresh token, clear the cookie and return 204, idempotently, only from an allowed Origin.
 
@@ -121,7 +147,7 @@ The refresh token SHALL be an opaque random value in an `HttpOnly`, `SameSite=St
 - THEN the response is 401 `UNAUTHORIZED`
 
 #### Scenario: S-DEV1006-22 me with a bad token
-- WHEN the token is expired, signed with another secret, uses `alg: none`, or its user no longer exists
+- WHEN the token is expired, signed with another secret, uses `alg: none`, is signed with HS512 (wrong algorithm), or its user no longer exists
 - THEN the response is 401 `UNAUTHORIZED`
 
 #### Scenario: S-DEV1006-23 requireAuth sets the caller

@@ -30,6 +30,13 @@ const EnvSchema = z
   })
   .superRefine((env, ctx) => {
     if (env.NODE_ENV !== 'production') return;
+    if (env.JWT_ACCESS_SECRET.includes('replace-me')) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['JWT_ACCESS_SECRET'],
+        message: 'must not be the replace-me placeholder in production',
+      });
+    }
     if (!env.COOKIE_SECURE) {
       ctx.addIssue({
         code: 'custom',

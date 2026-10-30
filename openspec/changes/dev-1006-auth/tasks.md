@@ -12,3 +12,6 @@
 - [x] 3.4 auth repository, service, controller, routes; wire in `app.ts`
 - [x] 3.5 `docs/api/openapi.yaml`: five paths, `AuthResponse`, `AuthUser`, 401/403/409/422 responses
 - [x] 3.6 Checkpoint: build, lint --max-warnings 0, typecheck, test, spec:validate, check:scenarios
+
+## 4. Review fixes
+- [x] 4.1 Close review findings (S-DEV1006-25..27, HS512, eager dummy hash), verify pass

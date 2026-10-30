@@ -24,6 +24,18 @@ const fromBodyParser = (err: unknown): AppError | undefined => {
   return undefined;
 };
 
+// Prisma errors carry `meta` that can hold passwordHash or tokenHash: never log the raw error.
+const describeError = (err: unknown) => {
+  if (!(err instanceof Error)) return { message: String(err) };
+  const code = 'code' in err ? err.code : undefined;
+  return {
+    name: err.name,
+    ...(typeof code === 'string' || typeof code === 'number' ? { code } : {}),
+    message: err.message,
+    stack: err.stack,
+  };
+};
+
 export const notFoundHandler: RequestHandler = () => {
   throw new AppError('ROUTE_NOT_FOUND', 'Route not found');
 };
@@ -40,7 +52,7 @@ export const createErrorHandler =
     const appError = known ?? new AppError('INTERNAL_ERROR', 'Internal server error');
     const status = ERROR_STATUS[appError.code];
     if (!known || status >= 500) {
-      logger.error({ err, requestId }, 'unhandled error');
+      logger.error({ error: describeError(err), requestId }, 'unhandled error');
     }
     const body: ErrorResponse = {
       error: {

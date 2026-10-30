@@ -49,8 +49,9 @@ export const createAuthService = ({
   tokens,
 }: AuthServiceDeps): AuthService => {
   // Verified against when the email is unknown, so both login failures cost one Argon2 run.
-  let dummyHash: Promise<string> | undefined;
-  const getDummyHash = () => (dummyHash ??= passwords.hashPassword('dummy-password-for-timing'));
+  // Created eagerly so the first unknown-email login is not slower than later ones.
+  const dummyHash = passwords.hashPassword('dummy-password-for-timing');
+  dummyHash.catch(() => undefined); // a failure surfaces when login awaits it
 
   const refreshExpiry = () => new Date(clock.now().getTime() + REFRESH_TOKEN_TTL_DAYS * DAY_MS);
 
@@ -84,7 +85,7 @@ export const createAuthService = ({
 
     login: async (input) => {
       const user = await repository.findUserByEmail(input.email);
-      const hash = user?.passwordHash ?? (await getDummyHash());
+      const hash = user?.passwordHash ?? (await dummyHash);
       const matches = await passwords.verifyPassword(hash, input.password);
       if (!user || !matches) {
         throw new AppError('INVALID_CREDENTIALS', 'Invalid email or password');

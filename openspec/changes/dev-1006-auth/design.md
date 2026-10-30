@@ -16,3 +16,7 @@
 - [ASSUMPTION - confirm] SDS 4.2 names the 401 code `UNAUTHORIZED` (not `UNAUTHENTICATED`); SDS wins.
 - [ASSUMPTION - confirm] No migration; adding `familyId` would give per-device family revocation but changes SDS 3. Cost: reuse logs the user out everywhere.
 - Libraries verified with Context7 (jose `SignJWT/jwtVerify`, @node-rs/argon2 `hash/verify`).
+- Accepted by design: register reveals duplicate emails (409 `EMAIL_TAKEN`, needed by the UI) and its timing differs; rate limiting is a follow-up.
+- Accepted: a concurrent rotation loser revokes all tokens (no grace window); "refresh reuse logs out all devices" was confirmed at Gate 1.
+- Accepted: access tokens carry no `iss`/`aud` and cannot be revoked within their 15 min life; `requireOrigin` is not applied to login/register (APP_ORIGIN is the frontend origin, so Swagger UI and curl would get 403): protected by SameSite=Strict + JSON content-type.
+- Production rejects a `JWT_ACCESS_SECRET` containing `replace-me`; error logs omit Prisma `err.meta`.

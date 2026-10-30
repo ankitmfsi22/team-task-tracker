@@ -204,6 +204,17 @@ describe('POST /api/auth/refresh', () => {
     expect(errorOf(next).code).toBe('UNAUTHORIZED');
   });
 
+  it('S-DEV1006-25 concurrent refresh with one cookie', async () => {
+    const { app } = createAuthApp(prisma);
+    const cookie = refreshCookieValue(await register(app));
+
+    const results = await Promise.all([postRefresh(app, cookie), postRefresh(app, cookie)]);
+
+    expect(results.map((res) => res.status).sort()).toEqual([200, 401]);
+    const loser = results.find((res) => res.status === 401);
+    expect(errorOf(loser as request.Response).code).toBe('UNAUTHORIZED');
+  });
+
   it('S-DEV1006-14 missing, unknown or expired refresh token', async () => {
     const { app } = createAuthApp(prisma);
     const cookie = refreshCookieValue(await register(app));
@@ -336,6 +347,12 @@ describe('GET /api/auth/me', () => {
       await sign('another-secret-that-is-at-least-32-bytes!!', user.id),
       unsigned,
       gone,
+      await new SignJWT({})
+        .setProtectedHeader({ alg: 'HS512' })
+        .setSubject(user.id)
+        .setIssuedAt()
+        .setExpirationTime('15m')
+        .sign(new TextEncoder().encode(env.JWT_ACCESS_SECRET)),
     ];
     for (const token of tokens) {
       const res = await request(app).get('/api/auth/me').set('Authorization', `Bearer ${token}`);

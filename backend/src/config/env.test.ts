@@ -42,6 +42,18 @@ describe('loadEnv', () => {
     );
   });
 
+  it('S-DEV1006-26 placeholder JWT secret rejected in production', () => {
+    const production = { ...valid, NODE_ENV: 'production', COOKIE_SECURE: 'true' };
+    const placeholder = 'replace-me-with-a-long-random-secret-value';
+    expect(() => loadEnv({ ...production, JWT_ACCESS_SECRET: placeholder })).toThrow(
+      /JWT_ACCESS_SECRET/,
+    );
+    expect(loadEnv({ ...valid, JWT_ACCESS_SECRET: placeholder }).JWT_ACCESS_SECRET).toBe(
+      placeholder,
+    );
+    expect(loadEnv(production).JWT_ACCESS_SECRET).toBe(valid.JWT_ACCESS_SECRET);
+  });
+
   it('production rejects Argon2 parameters below the minimum', () => {
     const production = { ...valid, NODE_ENV: 'production', COOKIE_SECURE: 'true' };
     expect(() => loadEnv({ ...production, ARGON2_MEMORY_KIB: '19455' })).toThrow(
