@@ -18,6 +18,7 @@
     "test:tooling": "node --test \"scripts/**/*.test.mjs\"",
     "spec:validate": "node scripts/spec-validate.mjs",
     "check:scenarios": "node scripts/check-scenarios.mjs",
+    "check:changes": "node scripts/check-changes.mjs",
     "test:e2e": "pnpm --filter e2e run test:e2e",
     "perf:lighthouse": "node scripts/lighthouse.mjs",
     "db:up": "docker compose --profile dev up -d --wait",
